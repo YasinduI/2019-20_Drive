@@ -89,14 +89,14 @@ public class HolonomicTeleop extends OpMode {
         // right stick X controls rotation
 
         float gamepad1LeftY = -gamepad1.left_stick_y;
-        float gamepad1LeftX = gamepad1.left_stick_x;
+        float gamepad1LeftX = -gamepad1.left_stick_x;
         float gamepad1RightX = gamepad1.right_stick_x;
         // Holonomic formulas
 
-        float FrontLeft = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-        float FrontRight = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-        float BackRight = gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-        float BackLeft = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
+        float FrontLeft = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
+        float FrontRight = gamepad1LeftY - -gamepad1LeftX - gamepad1RightX;
+        float BackRight = -gamepad1LeftY - -gamepad1LeftX - gamepad1RightX;
+        float BackLeft = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
 
         boolean changed = false; //Outside of loop()
         if (gamepad1.right_bumper && !changed) {
