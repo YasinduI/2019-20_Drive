@@ -22,21 +22,17 @@ import com.qualcomm.robotcore.util.Range;
         X           X
           X       X
 */
-@TeleOp(name = "Concept: HolonomicDrivetrain", group = "Concept")
+@TeleOp(name = " HolonomicDrivetrain")
 //@Disabled
 public class HolonomicTeleop extends OpMode {
 
-    DcMotor motorFrontRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorBackRight;
-    DcMotor motorBackLeft;
-    DcMotor LiftRight;
-    DcMotor LiftLeft;
-    DcMotor Intake1;
-    DcMotor Intake2;
-
-    double LL;
-    double LR;
+    DcMotor motorFrontRight = null;
+    DcMotor motorFrontLeft = null;
+    DcMotor motorBackRight = null;
+    DcMotor motorBackLeft = null;
+    DcMotor LiftLeft = null;
+    DcMotor Intake1 = null;
+    DcMotor Intake2 = null;
 
     boolean changed; //Outside of loop()
 
@@ -55,24 +51,23 @@ public class HolonomicTeleop extends OpMode {
     public void init() {
 
 
+
         /*
          * Use the hardwareMap to get the dc motors and servos by name. Note
          * that the names of the devices must match the names used when you
          * configured your robot and created the configuration file.
          */
 
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
+        motorBackRight = hardwareMap.get(DcMotor.class, "motorBackRight");
+        LiftLeft = hardwareMap.get(DcMotor.class, "LiftLeft");
+        Intake1 = hardwareMap.get(DcMotor.class, "Intake1");
+        Intake2 = hardwareMap.get(DcMotor.class, "Intake2");
 
-        //motorFrontRight = hardwareMap.dcMotor.get("motor front right");
-        //motorFrontLeft = hardwareMap.dcMotor.get("motor front left");
-        //motorBackLeft = hardwareMap.dcMotor.get("motor back left");
-        //motorBackRight = hardwareMap.dcMotor.get("motor back right");
         //These work without reversing (Tetrix motors).
         //AndyMark motors may be opposite, in which case uncomment these lines:
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        motorBackRight.setDirection(DcMotor.Direction.FORWARD);
-        LiftRight.setDirection(DcMotor.Direction.REVERSE);
         LiftLeft.setDirection(DcMotor.Direction.FORWARD);
         Intake1.setDirection(DcMotor.Direction.REVERSE);
         Intake2.setDirection(DcMotor.Direction.FORWARD);
@@ -81,6 +76,8 @@ public class HolonomicTeleop extends OpMode {
 
     @Override
     public void loop() {
+        LiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
 
         int min = 0;
@@ -89,52 +86,36 @@ public class HolonomicTeleop extends OpMode {
         // right stick X controls rotation
 
         float gamepad1LeftY = -gamepad1.left_stick_y;
-        float gamepad1LeftX = gamepad1.left_stick_x;
         float gamepad1RightX = gamepad1.right_stick_x;
+        float gamepad1LeftX = -gamepad1.left_stick_x;
         // Holonomic formulas
 
-        float FrontLeft = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-        float FrontRight = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-        float BackRight = gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-        float BackLeft = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
+        float FrontLeft = gamepad1LeftX - gamepad1LeftY + -gamepad1RightX;
+        float FrontRight = gamepad1LeftX - -gamepad1LeftY + -gamepad1RightX;
+        float BackRight = -gamepad1LeftX - -gamepad1LeftY + -gamepad1RightX;
+        float BackLeft = -gamepad1LeftX - gamepad1LeftY + -gamepad1RightX;
 
         boolean changed = false; //Outside of loop()
-        if (gamepad1.right_bumper && !changed) {
-            if (LiftLeft.getPower() == 0) {
-                LiftLeft.setPower(1);
-                LiftRight.setPower(1);
-            } else LiftLeft.setPower(0);
-            changed = true;
-        } else if
-        (!gamepad1.right_bumper) changed = false;
-
 
         if (LiftLeft.getCurrentPosition() > min && LiftLeft.getCurrentPosition() < max)
             if (gamepad1.dpad_up) {
                 LiftLeft.setPower(1);
-                LiftRight.setPower(1);
             } else if (gamepad1.dpad_down) {
-                LiftRight.setPower(-1);
                 LiftLeft.setPower(-1);
             } else {
                 LiftLeft.setPower(0);
-                LiftRight.setPower(0);
             }
         else if (LiftLeft.getCurrentPosition() >= max)
             if (gamepad1.dpad_down) {
                 LiftLeft.setPower(-1);
-                LiftRight.setPower(-1);
             } else {
                 LiftLeft.setPower(0);
-                LiftRight.setPower(0);
             }
         if (LiftLeft.getCurrentPosition() <= min)
             if (gamepad1.dpad_up) {
                 LiftLeft.setPower(1);
-                LiftRight.setPower(1);
             } else {
                 LiftLeft.setPower(0);
-                LiftRight.setPower(0);
             }
 
 
@@ -151,10 +132,17 @@ public class HolonomicTeleop extends OpMode {
         motorFrontLeft.setPower(FrontLeft);
         motorBackLeft.setPower(BackLeft);
         motorBackRight.setPower(BackRight);
-        LiftLeft.setPower(LL);
-        LiftRight.setPower(LR);
 
-
+        boolean changed1 = false; //Outside of loop()
+        if(gamepad1.y && !changed1) {
+            if(Intake1.getPower() == 0&&Intake2.getPower() == 0){
+                Intake1.setPower(1);
+                Intake2.setPower(1);}
+            else {
+                Intake1.setPower(0);
+                changed1 = true;}
+        } else if(!gamepad1.y){
+            changed1 = false;}
 
         /*
          * Telemetry for debugging
