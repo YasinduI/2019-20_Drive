@@ -33,6 +33,7 @@ public class HolonomicTeleop extends OpMode {
     DcMotor LiftLeft;
     DcMotor Intake1;
     DcMotor Intake2;
+    DcMotor BoxMotor;
 
     double LL;
     double LR;
@@ -65,7 +66,6 @@ public class HolonomicTeleop extends OpMode {
         Intake1 = hardwareMap.dcMotor.get("Intake1");
         Intake2 = hardwareMap.dcMotor.get("Intake2");
         LiftLeft = hardwareMap.dcMotor.get("LiftLeft");
-        LiftRight =hardwareMap.dcMotor.get("LiftRight");
 
         //These work without reversing (Tetrix motors).
         //AndyMark motors may be opposite, in which case uncomment these lines:
@@ -74,10 +74,12 @@ public class HolonomicTeleop extends OpMode {
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
         motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         motorBackRight.setDirection(DcMotor.Direction.FORWARD);
-        LiftRight.setDirection(DcMotor.Direction.REVERSE);
         LiftLeft.setDirection(DcMotor.Direction.FORWARD);
         Intake1.setDirection(DcMotor.Direction.REVERSE);
         Intake2.setDirection(DcMotor.Direction.FORWARD);
+        BoxMotor = hardwareMap.get(DcMotor.class, "BoxMotor");
+        BoxMotor.setDirection(DcMotor.Direction.REVERSE);
+
 
     }
 
@@ -89,6 +91,8 @@ public class HolonomicTeleop extends OpMode {
         int max = 1800;
         // left stick controls direction
         // right stick X controls rotation
+        BoxMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         float gamepad1LeftY = gamepad1.left_stick_y;
         float gamepad1LeftX = gamepad1.left_stick_x;
@@ -138,7 +142,33 @@ public class HolonomicTeleop extends OpMode {
                 }
 
 
-            // clip the right/left values so that the values never exceed +/- 1
+        if(BoxMotor.getCurrentPosition()>min && BoxMotor.getCurrentPosition()<max)
+            if(gamepad1.b){
+                BoxMotor.setPower(1);
+            }
+            else if(gamepad1.x){
+                BoxMotor.setPower(-1);
+            }
+            else{
+                BoxMotor.setPower(0);
+            }
+        else if(BoxMotor.getCurrentPosition()>=max)
+            if(gamepad1.x){
+                BoxMotor.setPower(-1);
+            }else{
+                BoxMotor.setPower(0);
+            }
+        else if(BoxMotor.getCurrentPosition()<=min)
+            if(gamepad1.b){
+                BoxMotor.setPower(1);
+            }
+            else{
+                BoxMotor.setPower(0);
+            }
+
+
+
+    // clip the right/left values so that the values never exceed +/- 1
             FrontRight = Range.clip(FrontRight, -1, 1);
             FrontLeft = Range.clip(FrontLeft, -1, 1);
             BackLeft = Range.clip(BackLeft, -1, 1);
@@ -150,8 +180,6 @@ public class HolonomicTeleop extends OpMode {
             motorFrontLeft.setPower(FrontLeft);
             motorBackLeft.setPower(BackLeft);
             motorBackRight.setPower(BackRight);
-            LiftLeft.setPower(LL);
-            LiftRight.setPower(LR);
 
 
 
