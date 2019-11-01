@@ -4,8 +4,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
@@ -21,7 +23,7 @@ import com.qualcomm.robotcore.util.Range;
         X           X
           X       X
 */
-@TeleOp(name = "Concept: HolonomicDrivetrain", group = "Concept")
+@TeleOp(name = "HolonomicDrivetrain", group = "Concept")
 //@Disabled
 public class HolonomicTeleop extends OpMode {
 
@@ -29,14 +31,11 @@ public class HolonomicTeleop extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    DcMotor LiftRight;
     DcMotor LiftLeft;
     DcMotor Intake1;
     DcMotor Intake2;
-    DcMotor BoxMotor;
+    CRServo BoxMotor;
 
-    double LL;
-    double LR;
 
     boolean changed; //Outside of loop()
 
@@ -77,22 +76,22 @@ public class HolonomicTeleop extends OpMode {
         LiftLeft.setDirection(DcMotor.Direction.FORWARD);
         Intake1.setDirection(DcMotor.Direction.REVERSE);
         Intake2.setDirection(DcMotor.Direction.FORWARD);
-        BoxMotor = hardwareMap.get(DcMotor.class, "BoxMotor");
-        BoxMotor.setDirection(DcMotor.Direction.REVERSE);
+        BoxMotor = hardwareMap.get(CRServo.class, "BoxMotor");
+        LiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
     }
 
     @Override
     public void loop() {
-
-
-        int min = 0;
-        int max = 1800;
-        // left stick controls direction
+        int min = -100;
+        int max = -100;
+        int mina = 0;
+        int maxb =200;
+        // left stick controls direc tion
         // right stick X controls rotation
-        BoxMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         float gamepad1LeftY = gamepad1.left_stick_y;
         float gamepad1LeftX = gamepad1.left_stick_x;
@@ -128,13 +127,13 @@ public class HolonomicTeleop extends OpMode {
                 } else {
                     LiftLeft.setPower(0);
                 }
-        else if (LiftLeft.getCurrentPosition() >= max)
+        else if (LiftLeft.getCurrentPosition() <= min)
                 if (gamepad1.dpad_down) {
                     LiftLeft.setPower(-1);
                 } else {
                     LiftLeft.setPower(0);
                 }
-        if (LiftLeft.getCurrentPosition() <= min)
+        if (LiftLeft.getCurrentPosition() >= max)
                 if (gamepad1.dpad_up) {
                     LiftLeft.setPower(1);
                 } else {
@@ -142,40 +141,22 @@ public class HolonomicTeleop extends OpMode {
                 }
 
 
-        if(BoxMotor.getCurrentPosition()>min && BoxMotor.getCurrentPosition()<max)
-            if(gamepad1.b){
-                BoxMotor.setPower(1);
-            }
-            else if(gamepad1.x){
-                BoxMotor.setPower(-1);
-            }
-            else{
-                BoxMotor.setPower(0);
-            }
-        else if(BoxMotor.getCurrentPosition()>=max)
-            if(gamepad1.x){
-                BoxMotor.setPower(-1);
-            }else{
-                BoxMotor.setPower(0);
-            }
-        else if(BoxMotor.getCurrentPosition()<=min)
-            if(gamepad1.b){
-                BoxMotor.setPower(1);
-            }
-            else{
-                BoxMotor.setPower(0);
-            }
 
 
 
-    // clip the right/left values so that the values never exceed +/- 1
+
+
+
+
+        // clip the right/left values so that the values never exceed +/- 1
             FrontRight = Range.clip(FrontRight, -1, 1);
             FrontLeft = Range.clip(FrontLeft, -1, 1);
             BackLeft = Range.clip(BackLeft, -1, 1);
             BackRight = Range.clip(BackRight, -1, 1);
 
 
-            // write the values to the motors
+
+        // write the values to the motors
             motorFrontRight.setPower(FrontRight);
             motorFrontLeft.setPower(FrontLeft);
             motorBackLeft.setPower(BackLeft);
@@ -183,19 +164,19 @@ public class HolonomicTeleop extends OpMode {
 
 
 
-            /*
+        /*
              * Telemetry for debugging
              */
-            telemetry.addData("Text", "*** Robot Data***");
+            telemetry.addData("Text", "*** Robot Data***");///////////////////////////////////////////////////////////////////
             telemetry.addData("Joy XL YL XR", String.format("%.2f", gamepad1LeftX) + " " +
                     String.format("%.2f", gamepad1LeftY) + " " + String.format("%.2f", gamepad1RightX));
             telemetry.addData("f left pwr", "front left  pwr: " + String.format("%.2f", FrontLeft));
             telemetry.addData("f right pwr", "front right pwr: " + String.format("%.2f", FrontRight));
             telemetry.addData("b right pwr", "back right pwr: " + String.format("%.2f", BackRight));
             telemetry.addData("b left pwr", "back left pwr: " + String.format("%.2f", BackLeft));
+        telemetry.addData("LiftLeft", LiftLeft.getCurrentPosition() + "  busy=" + LiftLeft.isBusy());
 
-
-        }
+    }
 
 
 
