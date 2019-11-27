@@ -6,11 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
-
-
 /*
    Robot wheel mapping:
           X FRONT X
@@ -23,7 +21,7 @@ import com.qualcomm.robotcore.util.Range;
         X           X
           X       X
 */
-@TeleOp(name = "HolonomicDrivetrain", group = "Concept")
+@TeleOp(name = "Meet 0 TeleOp", group = "Drive")
 //@Disabled
 public class HolonomicTeleop extends OpMode {
 
@@ -35,6 +33,11 @@ public class HolonomicTeleop extends OpMode {
     DcMotor Intake1;
     DcMotor Intake2;
     CRServo BoxMotor;
+    Servo GripLeft;
+    Servo GripRight;
+    Servo Hitter;
+    TouchSensor Unload;
+    TouchSensor Load;
 
 
     boolean changed; //Outside of loop()
@@ -65,6 +68,13 @@ public class HolonomicTeleop extends OpMode {
         Intake1 = hardwareMap.dcMotor.get("Intake1");
         Intake2 = hardwareMap.dcMotor.get("Intake2");
         LiftLeft = hardwareMap.dcMotor.get("LiftLeft");
+        BoxMotor = hardwareMap.get(CRServo.class, "BoxMotor");
+        GripLeft = hardwareMap.get(Servo.class, "GripLeft");
+        GripRight = hardwareMap.get(Servo.class, "GripRight");
+        Hitter = hardwareMap.get(Servo.class, "Hitter");
+        Unload = hardwareMap.get(TouchSensor.class, "Unload");
+        Load = hardwareMap.get(TouchSensor.class, "LOad");
+
 
         //These work without reversing (Tetrix motors).
         //AndyMark motors may be opposite, in which case uncomment these lines:
@@ -76,19 +86,23 @@ public class HolonomicTeleop extends OpMode {
         LiftLeft.setDirection(DcMotor.Direction.FORWARD);
         Intake1.setDirection(DcMotor.Direction.REVERSE);
         Intake2.setDirection(DcMotor.Direction.FORWARD);
-        BoxMotor = hardwareMap.get(CRServo.class, "BoxMotor");
         LiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        GripLeft.setDirection(Servo.Direction.FORWARD);
+        GripRight.setDirection(Servo.Direction.FORWARD);
 
+        Hitter.setDirection(Servo.Direction.REVERSE);
+
+        telemetry.addData("Ching Chong","Hao Le!");
     }
 
     @Override
     public void loop() {
-        int min = -100;
+        int min = -2050;
         int max = -100;
         int mina = 0;
-        int maxb =200;
-        // left stick controls direc tion
+        int maxb = 200;
+        // left stick controls direction
         // right stick X controls rotation
         LiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -104,59 +118,83 @@ public class HolonomicTeleop extends OpMode {
         float BackRight = -gamepad1LeftY - -gamepad1LeftX - gamepad1RightX;
 
 
-        if (gamepad1.right_bumper) {
+        if (gamepad2.right_bumper) {
             Intake1.setPower(.4);
             Intake2.setPower(.4);
 
-        }
-        else if (gamepad1.left_bumper) {
+        } else if (gamepad2.left_bumper) {
             Intake1.setPower(-.4);
             Intake2.setPower(-.4);
 
-        }
-        else {
+        } else {
             Intake1.setPower(0);
             Intake2.setPower(0);
-            }
+        }
 
         if (LiftLeft.getCurrentPosition() > min && LiftLeft.getCurrentPosition() < max)
-                if (gamepad1.dpad_up) {
-                    LiftLeft.setPower(1);
-                } else if (gamepad1.dpad_down) {
-                    LiftLeft.setPower(-1);
-                } else {
-                    LiftLeft.setPower(0);
-                }
+            if (gamepad2.dpad_up) {
+                LiftLeft.setPower(1);
+            } else if (gamepad2.dpad_down) {
+                LiftLeft.setPower(-1);
+            } else {
+                LiftLeft.setPower(0);
+            }
         else if (LiftLeft.getCurrentPosition() <= min)
-                if (gamepad1.dpad_down) {
-                    LiftLeft.setPower(-1);
-                } else {
-                    LiftLeft.setPower(0);
-                }
+            if (gamepad2.dpad_down) {
+                LiftLeft.setPower(-1);
+            } else {
+                LiftLeft.setPower(0);
+            }
         if (LiftLeft.getCurrentPosition() >= max)
-                if (gamepad1.dpad_up) {
-                    LiftLeft.setPower(1);
-                } else {
-                    LiftLeft.setPower(0);
-                }
+            if (gamepad2.dpad_up) {
+                LiftLeft.setPower(1);
+            } else {
+                LiftLeft.setPower(0);
+            }
+
+        Hitter.setPosition(-gamepad2.right_stick_y);
+
+        if (gamepad1.left_trigger > 0) {
+            GripLeft.setPosition(Servo.MIN_POSITION);
+            GripRight.setPosition(Servo.MAX_POSITION);
+        }
+
+        else if (gamepad1.right_trigger > 0) {
+            GripRight.setPosition(Servo.MIN_POSITION);
+            GripLeft.setPosition(Servo.MAX_POSITION);
+        }
+
+        if (gamepad2.y) {
+            if (!Unload.isPressed()) {
+                BoxMotor.setPower(1);
+            }
+            if (Unload.isPressed()) {
+                BoxMotor.setPower(0);
+            }
+        }
+        if (gamepad2.a) {
+            if (!Load.isPressed()) {
+                BoxMotor.setPower(-1);
+            }
+            if (Load.isPressed()) {
+                BoxMotor.setPower(0);
+            }
+        }
+        if (Unload.isPressed() && !gamepad2.y && !gamepad2.a)
+            BoxMotor.setPower(0);
+        if (Load.isPressed() && !gamepad2.y && !gamepad2.a)
+            BoxMotor.setPower(0);
 
 
 
+    // clip the right/left values so that the values never exceed +/- 1
+    FrontRight =Range.clip(FrontRight,-1,1);
+    FrontLeft =Range.clip(FrontLeft,-1,1);
+    BackLeft =Range.clip(BackLeft,-1,1);
+    BackRight =Range.clip(BackRight,-1,1);
 
 
-
-
-
-
-        // clip the right/left values so that the values never exceed +/- 1
-            FrontRight = Range.clip(FrontRight, -1, 1);
-            FrontLeft = Range.clip(FrontLeft, -1, 1);
-            BackLeft = Range.clip(BackLeft, -1, 1);
-            BackRight = Range.clip(BackRight, -1, 1);
-
-
-
-        // write the values to the motors
+    // write the values to the motors
             motorFrontRight.setPower(FrontRight);
             motorFrontLeft.setPower(FrontLeft);
             motorBackLeft.setPower(BackLeft);
@@ -164,17 +202,31 @@ public class HolonomicTeleop extends OpMode {
 
 
 
-        /*
-             * Telemetry for debugging
-             */
-            telemetry.addData("Text", "*** Robot Data***");///////////////////////////////////////////////////////////////////
-            telemetry.addData("Joy XL YL XR", String.format("%.2f", gamepad1LeftX) + " " +
-                    String.format("%.2f", gamepad1LeftY) + " " + String.format("%.2f", gamepad1RightX));
-            telemetry.addData("f left pwr", "front left  pwr: " + String.format("%.2f", FrontLeft));
-            telemetry.addData("f right pwr", "front right pwr: " + String.format("%.2f", FrontRight));
-            telemetry.addData("b right pwr", "back right pwr: " + String.format("%.2f", BackRight));
-            telemetry.addData("b left pwr", "back left pwr: " + String.format("%.2f", BackLeft));
-        telemetry.addData("LiftLeft", LiftLeft.getCurrentPosition() + "  busy=" + LiftLeft.isBusy());
+    /*
+     * Telemetry for debugging
+     */
+            telemetry.addData("Text","*** Robot Data***");///////////////////////////////////////////////////////////////////
+            //telemetry.addData("Joy XL YL XR",String.format("%.2f",gamepad1LeftX)+" "+
+            //String.format("%.2f",gamepad1LeftY)+" "+String.format("%.2f",gamepad1RightX));
+            //telemetry.addData("f left pwr","front left  pwr: "+String.format("%.2f",FrontLeft));
+            //telemetry.addData("f right pwr","front right pwr: "+String.format("%.2f",FrontRight));
+            //telemetry.addData("b right pwr","back right pwr: "+String.format("%.2f",BackRight));
+            //telemetry.addData("b left pwr","back left pwr: "+String.format("%.2f",BackLeft));
+            telemetry.addData("LiftLeft",LiftLeft.getCurrentPosition()+"  busy="+LiftLeft.isBusy());
+            telemetry.addData("Box", BoxMotor.getPower());
+            telemetry.addData("u pressvalue",Unload.getValue());
+            telemetry.addData("l pressvalue",Load.getValue());
+            telemetry.addData("GripperL",GripLeft.getPosition() );
+            telemetry.addData("GripperR",GripRight.getPosition() );
+            telemetry.addData("GripperTR",gamepad1.right_trigger );
+            telemetry.addData("GripperTL",gamepad1.left_trigger );
+
+
+
+
+
+
+
 
     }
 
@@ -183,5 +235,7 @@ public class HolonomicTeleop extends OpMode {
     @Override
     public void stop (){
 
+        telemetry.addData("Well Played!","");
         }
     }
+
