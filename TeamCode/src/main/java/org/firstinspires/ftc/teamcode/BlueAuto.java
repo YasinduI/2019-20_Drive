@@ -9,22 +9,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "BlueAuto")
 public class BlueAuto extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motorFrontRight = null;
-    private DcMotor motorFrontLeft = null;
-    private DcMotor motorBackRight = null;
-    private DcMotor motorBackLeft = null;
-    private DcMotor lift = null;
-    private Servo GripLeft = null;
-    private Servo GripRight = null;
-    private Servo platform = null;
-    private CRServo spinR = null;
-    private CRServo spinL = null;
+    DcMotor motorFrontRight;
+    DcMotor motorFrontLeft;
+    DcMotor motorBackRight;
+    DcMotor motorBackLeft;
+    DcMotor lift;
+    Servo GripLeft;
+    Servo GripRight;
+    Servo platform;
+    CRServo spinR;
+    CRServo spinL;
+
 
 
     double power = 1; // This can change if needed
     @Override
     public void runOpMode() {
+
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontRight");
         motorFrontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         motorBackRight = hardwareMap.get(DcMotor.class, "backRight");
@@ -38,14 +39,21 @@ public class BlueAuto extends LinearOpMode {
 
 
 
-        //These work without reversing (Tetrix motors).
-        //AndyMark motors may be opposite, in which case uncomment these lines:
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+
         spinR.setDirection(CRServo.Direction.FORWARD);
         spinL.setDirection(CRServo.Direction.REVERSE);
+        GripRight.setDirection(Servo.Direction.FORWARD);
+        GripLeft.setDirection(Servo.Direction.REVERSE);
+
+        lift.setDirection(DcMotor.Direction.REVERSE);
+        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Send telemetry message to signify robot waiting;
         //This shows up on the phone after everything has been initialized
