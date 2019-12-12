@@ -2,6 +2,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -31,7 +32,7 @@ import static com.qualcomm.robotcore.hardware.Servo.MIN_POSITION;
           X       X
 */
 @TeleOp(name = "HolonomicDrivetrain", group = "Concept")
-//@Disabled
+@Disabled
 public class HolonomicTeleop extends OpMode {
 
     DcMotor motorFrontRight;
