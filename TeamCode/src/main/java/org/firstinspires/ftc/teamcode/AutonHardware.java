@@ -55,6 +55,10 @@ public class AutonHardware extends LinearOpMode {
 
     static final float on = (float) 0.3;
     static final float off = (float) 0;
+    double grabMax = .9;
+    double grabMin = .5;
+    double platformMax = 1;
+    double platformMin = 0;
 
 
 
@@ -70,9 +74,13 @@ public class AutonHardware extends LinearOpMode {
         motorFrontRight.setPower(FrontRight);
         motorBackLeft.setPower(BackLeft);
         motorBackRight.setPower(BackRight);
+        GripLeft.scaleRange(.5, .85);
+        GripRight.scaleRange(.5, .9);
+        platformL.scaleRange(0, 1);
+        platformR.scaleRange(0, 1);
+
 
         return 0;
-
     }
     public void StopRobot(long time) {
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -80,24 +88,50 @@ public class AutonHardware extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    public void DriveForward(long time) {
+    public void DriveForward(long time , int stime) {
         mecaformula(off,on,off);
+        sleep(stime);
 
     }
-    public void DriveBackward(long time) {
+    public void DriveBackward(long time, int stime) {
         mecaformula(off,-on,off);
+        sleep(stime);
     }
-    public void turnRight(long time) {
+    public void turnRight(long time, int stime) {
         mecaformula(off,off,on);
+        sleep(stime);
     }
-    public void turnLeft(long time) {
+    public void turnLeft(long time, int stime) {
         mecaformula(off,off,-on);
+        sleep(stime);
     }
-    public void strafeRight(long time) {
+    public void strafeRight(long time, int stime) {
         mecaformula(on,off,off);
+        sleep(stime);
     }
-    public void strafeLeft(long time) {
+    public void strafeLeft(long time, int stime) {
         mecaformula(-on,off,off);
+        sleep(stime);
+    }
+    public void gripOpen(long time , double postion, int stime){
+        GripLeft.setPosition(postion);
+        GripRight.setPosition(postion);
+        sleep(stime);
+    }
+    public void gripClose(long time, double position, int stime){
+        GripLeft.setPosition(position);
+        GripRight.setPosition(position);
+        sleep(stime);
+    }
+    public void platformDown(long time, double position, int stime){
+        platformL.setPosition(position);
+        platformR.setPosition(position);
+        sleep(stime);
+    }
+    public void platformUp(long time, double position, int stime) {
+        platformL.setPosition(position);
+        platformR.setPosition(position);
+        sleep(stime);
     }
 
 
