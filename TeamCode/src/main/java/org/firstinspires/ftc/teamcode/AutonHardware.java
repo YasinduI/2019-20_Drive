@@ -70,8 +70,8 @@ public class AutonHardware extends LinearOpMode {
 
         lift = hardwareMap.get(DcMotor.class, "lift");
 
-        lift.setDirection(DcMotor.Direction.FORWARD);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setDirection(DcMotor.Direction.REVERSE);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -111,10 +111,7 @@ public class AutonHardware extends LinearOpMode {
         motorFrontRight.setPower(FrontRight);
         motorBackLeft.setPower(BackLeft);
         motorBackRight.setPower(BackRight);
-        GripLeft.scaleRange(.5, .85);
-        GripRight.scaleRange(.5, .9);
-        platformL.scaleRange(0, 1);
-        platformR.scaleRange(0, 1);
+
 
 
         return "done";
@@ -129,13 +126,13 @@ public class AutonHardware extends LinearOpMode {
     }
 
     public void DriveForward(long time, int stime) {
-        mecaformula(off, on, off);
+        mecaformula(off, -on, off);
         sleep(time);
 
     }
 
     public void DriveBackward(long time, int stime) {
-        mecaformula(off, -on, off);
+        mecaformula(off, on, off);
         sleep(time);
     }
 
@@ -184,8 +181,10 @@ public class AutonHardware extends LinearOpMode {
     }
 
 // Lift Mechanism
-    public void StopLiftArm (){
+    public void StopLiftArm (int stime){
+        getlift();
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sleep(stime);
     }
 
     public void LiftArm(long time , double power , int stime){

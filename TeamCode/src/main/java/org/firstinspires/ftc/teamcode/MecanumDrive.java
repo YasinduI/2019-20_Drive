@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import static java.lang.Math.sqrt;
 
 
-@TeleOp(name = "MecanumDrive", group = "Opmode")
+@TeleOp(name = "MecanumDrive2", group = "Opmode")
 
 
 public class MecanumDrive extends TeleOpHardware {
@@ -14,21 +17,22 @@ public class MecanumDrive extends TeleOpHardware {
 
 
         Driving();
-        String liftstatus = LiftArm();
+        LiftArm();
         String gripperstatus = GripperIntake();
-        Double platformstatus = PlatformGrabber();
+        String platformstatus = PlatformGrabber();
         String DrivingSpeed = returndrivevalue();
 
 
         telemetry.addData("DrivingSpeed " , DrivingSpeed);
-        telemetry.addData("liftstatus", liftstatus);
-        telemetry.addData("liftposition", liftencodervalue());
+        telemetry.addData("liftstatus", LiftArm());
         telemetry.addData("liftpower", lift.getPower());
         telemetry.addData("gripperstatus", gripperstatus, GripRight.getPosition(), GripLeft.getPosition());
         telemetry.addData("platform", platformstatus);
         telemetry.addData("Brake", lift.getZeroPowerBehavior());
 
     }
+
+
 
     @Override
     public void stop() {
