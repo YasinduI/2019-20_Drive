@@ -11,17 +11,17 @@ import static java.lang.Math.sqrt;
 
 public class TeleOpHardware extends OpMode {
 
-    DcMotor motorFrontRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorBackRight;
-    DcMotor motorBackLeft;
-    DcMotor lift;
-    Servo GripLeft;
-    Servo GripRight;
-    Servo platformR;
-    Servo platformL;
-    CRServo spinR;
-    CRServo spinL;
+    public DcMotor motorFrontRight;
+    public DcMotor motorFrontLeft;
+    public DcMotor motorBackRight;
+    public DcMotor motorBackLeft;
+    public DcMotor lift;
+    public Servo GripLeft;
+    public Servo GripRight;
+    public Servo platformR;
+    public Servo platformL;
+    public CRServo spinR;
+    public CRServo spinL;
 
     @Override
     public void init() {
@@ -31,7 +31,6 @@ public class TeleOpHardware extends OpMode {
         motorBackRight = hardwareMap.get(DcMotor.class, "backRight");
         motorBackLeft = hardwareMap.get(DcMotor.class, "backLeft");
 
-        lift = hardwareMap.get(DcMotor.class, "lift");
 
         GripLeft = hardwareMap.get(Servo.class, "GripLeft");
         GripRight = hardwareMap.get(Servo.class, "GripRight");
@@ -56,16 +55,27 @@ public class TeleOpHardware extends OpMode {
         platformL.setDirection(Servo.Direction.REVERSE);
         platformR.setDirection(Servo.Direction.FORWARD);
 
-        lift.setDirection(DcMotor.Direction.REVERSE);
-        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift = hardwareMap.get(DcMotor.class, "lift");
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setDirection(DcMotor.Direction.REVERSE);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
     }
 
+    public void getlift () {
+
+        lift = hardwareMap.get(DcMotor.class, "lift");
+
+
+        //lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+
     @Override
-    public void loop() {
+    public void loop()  {
 
     }
     //Functions for Driving
@@ -121,9 +131,8 @@ public class TeleOpHardware extends OpMode {
 
     }
 
-
-    String returndrivevalue() {
-
+    public String returndrivevalue() {
+        getlift();
         String Speed;
 
         double FL = motorFrontLeft.getPower();
@@ -137,13 +146,17 @@ public class TeleOpHardware extends OpMode {
 
     }
 
-    double liftencodervalue() {
+    public double liftencodervalue() {
+        getlift();
+        lift = hardwareMap.get(DcMotor.class, "lift");
+
         double value = -lift.getCurrentPosition();
 
         return value;
     }
 
-    double liftupvalue() {
+    private double liftupvalue() {
+        getlift();
         double distance = lift.getCurrentPosition();
         double power = 0;
         if (distance >= 1500) {
@@ -152,7 +165,8 @@ public class TeleOpHardware extends OpMode {
         return power;
     }
 
-    double liftdownvalue() {
+    private double liftdownvalue() {
+        getlift();
         double distance = lift.getCurrentPosition();
 
         double power = 0;
@@ -165,7 +179,7 @@ public class TeleOpHardware extends OpMode {
         return power;
     }
 
-    String LiftArm() {
+    public String LiftArm() {
 
         int min = 10;
         int max = 1850;
@@ -215,7 +229,7 @@ public class TeleOpHardware extends OpMode {
 
     }
 
-    String GripperIntake() {
+    public String GripperIntake() {
 
         String power = "na";
 
@@ -240,11 +254,11 @@ public class TeleOpHardware extends OpMode {
         return power;
     }
 
-    double PlatformGrabber() {
+    public double PlatformGrabber() {
         double Position = (platformL.getPosition() + platformR.getPosition());
 
-        platformL.scaleRange(0, 1);
-        platformR.scaleRange(0, 1);
+        platformL.scaleRange(.2,1);
+        platformR.scaleRange(.2, .5);
 
        /* double max = .5;
         double min = .2;
@@ -256,7 +270,7 @@ public class TeleOpHardware extends OpMode {
         return Position;
     }
 
-    double scaleInput(double dVal) {
+    private double scaleInput(double dVal) {
         double[] scaleArray = {0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
                 0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00};
 
