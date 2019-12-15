@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import static java.lang.Math.sqrt;
 
 
-@TeleOp(name = "MecanumDrive2", group = "Opmode")
+@TeleOp(name = "Drive Code Meet 2")
 
 
 public class MecanumDrive extends TeleOpHardware {

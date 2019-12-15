@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "AutonTest")
+@Autonomous(name = "FullRed Auton")
 
 
 public class RedAuton extends AutonHardware {
@@ -13,22 +13,38 @@ public class RedAuton extends AutonHardware {
 
         startup();
         waitForStart();
-        LiftArm(1000, 1, 500);
-        StopLiftArm();
-        DriveForward(2000, 0);
-        strafeRight(1000,0);
-        DriveForward(1000,0);
-        platformDown(1000, 1,0);
-        platformUp(1000,0,0);
-        DriveBackward(200,0);
-        platformDown(1000,1,0);
-        DriveBackward(2000, 0);
-        turnRight(2000,0);
-        platformUp(1000,0,0);
-        DriveForward(2000,1);
-        strafeRight(1000,0);
-        DriveBackward(2000,0);
+        Grabbers(800,grabMin,800);
+        LiftArm(600,1,600);
+        StopLiftArm(100);
+        DriveForward(800,800);
+        strafeRight(400,400);
+        DriveForward(650,650);
+        DriveBackward(80,100);
+        StopRobot(100);
+        Platform(1000,platformMax,1500);
+        DriveForward(80,80);
+        DriveBackward(1250,1250);
+        turnRight(4500,4500);
+        StopRobot(100);
+        Platform(500,platformMin,500);
+        DriveForward(3500,3500);
+        StopRobot(100);
+        Grabbers(800,grabMin,900);
+        strafeRight(1000,1000);
+        DriveForward(500,500);
+        StopRobot(100);
+        DriveBackward(800,800);
+        strafeLeft(1000,1000);
+        DriveBackward(900,900);
+        StopRobot(100);
+        LiftArm(2000,liftdownvalue(),2000);
+        LiftArm(3000,0.15,2000);
 
+        StopLiftArm(100);
+        stop();
+
+        telemetry.addLine("path complete");
+        telemetry.update();
 
 
     }

@@ -25,12 +25,9 @@ public class AutonHardware extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         startup();
-        lift = hardwareMap.get(DcMotor.class, "lift");
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
     }
-
 
 
     public void startup() {
@@ -61,33 +58,25 @@ public class AutonHardware extends LinearOpMode {
         GripRight.setDirection(Servo.Direction.FORWARD);
         GripLeft.setDirection(Servo.Direction.REVERSE);
 
-        platformL.setDirection(Servo.Direction.REVERSE);
-        platformR.setDirection(Servo.Direction.FORWARD);
+        platformL.setDirection(Servo.Direction.FORWARD);
+        platformR.setDirection(Servo.Direction.REVERSE);
 
+        lift = hardwareMap.get(DcMotor.class, "lift");
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setDirection(DcMotor.Direction.REVERSE);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        telemetry.addData("liftvalue", lift.getCurrentPosition());
     }
 
     public void getlift() {
 
         lift = hardwareMap.get(DcMotor.class, "lift");
 
-        lift.setDirection(DcMotor.Direction.REVERSE);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
 
-    //Methods for Auton
-
-
-
-
-    /*public float rtFrontLeft(float X, float Y, float R){
-        float aFrontLeft = +X + -Y + R;
-        return aFrontLeft;
-    }
-
-     */
 //input variables
 
     static final double on = 0.3;
@@ -102,27 +91,34 @@ public class AutonHardware extends LinearOpMode {
     public String mecaformula(double XX, double YY, double RR) {
 
 
-        double FrontLeft = +XX + -YY + RR;
-        double FrontRight = -XX + -YY - RR;
-        double BackLeft = -XX + YY + RR;
-        double BackRight = +XX + YY - RR;
+        double FrontLeft = +(XX) - (YY) + (RR);
+        double FrontRight = -(XX) - (YY) - (RR);
+        double BackLeft = -(XX) + (YY) + (RR);
+        double BackRight = +(XX) + (YY) - (RR);
 
         motorFrontLeft.setPower(FrontLeft);
         motorFrontRight.setPower(FrontRight);
         motorBackLeft.setPower(BackLeft);
         motorBackRight.setPower(BackRight);
-
+        GripLeft.scaleRange(.2, .5);
+        GripRight.scaleRange(.51, .8);
+        platformL.scaleRange(0, 0.65);
+        platformR.scaleRange(.35, 1);
 
 
         return "done";
     }
 
-
-    public void StopRobot() {
+    public void StopRobot(long time) {
+        motorFrontRight.setPower(0);
+        motorFrontLeft.setPower(0);
+        motorBackRight.setPower(0);
+        motorBackLeft.setPower(0);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sleep(time);
     }
 
     public void DriveForward(long time, int stime) {
@@ -134,6 +130,7 @@ public class AutonHardware extends LinearOpMode {
     public void DriveBackward(long time, int stime) {
         mecaformula(off, on, off);
         sleep(time);
+        telemetry.addData("value", motorBackLeft.getPower() + "," + motorBackRight.getPower());
     }
 
     public void turnRight(long time, int stime) {
@@ -156,38 +153,30 @@ public class AutonHardware extends LinearOpMode {
         sleep(time);
     }
 
-    public void gripOpen(long time, double position, int stime) {
+    public void Grabbers(long time, double position,int stime) {
         GripLeft.setPosition(position);
         GripRight.setPosition(position);
-        sleep(time);
-    }
-
-    public void gripClose(long time, double position, int stime) {
-        GripLeft.setPosition(position);
-        GripRight.setPosition(position);
-        sleep(time);
-    }
-
-    public void platformDown(long time, double position, int stime) {
-        platformL.setPosition(position);
-        platformR.setPosition(position);
-        sleep(time);
-    }
-
-    public void platformUp(long time, double position, int stime) {
-        platformL.setPosition(position);
-        platformR.setPosition(position);
-        sleep(time);
-    }
-
-// Lift Mechanism
-    public void StopLiftArm (int stime){
-        getlift();
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sleep(stime);
     }
 
-    public void LiftArm(long time , double power , int stime){
+
+    public void Platform(long time, double position, int stime) {
+        platformL.setPosition(position);
+        platformR.setPosition(position);
+        sleep(time);
+    }
+
+
+
+    // Lift Mechanism
+    public void StopLiftArm(long time) {
+        getlift();
+        lift.setPower(0);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        sleep(time);
+    }
+
+    public void LiftArm(long time, double power, int stime) {
         getlift();
 
         lift.setPower(power);
@@ -198,25 +187,8 @@ public class AutonHardware extends LinearOpMode {
 
     }
 
-/*    private double liftencodervalue() {
-        getlift();
-        double value = -lift.getCurrentPosition();
 
-
-        return value;
-    }
-
-   /* private double liftupvalue() {
-        double distance = lift.getCurrentPosition();
-        double power = 0;
-        if (distance >= 1500) {
-            power = 0.35;
-        }
-        return power;
-    }
-    */
-
-   public double liftdownvalue() {
+    public double liftdownvalue() {
         getlift();
         lift = hardwareMap.get(DcMotor.class, "lift");
         double distance = lift.getCurrentPosition();
@@ -231,60 +203,4 @@ public class AutonHardware extends LinearOpMode {
         return power;
     }
 
-    /*public String LiftArm(long time, boolean UP, boolean DOWN) {
-
-        int min = 10;
-        int max = 1850;
-
-        String status = "na";
-
-        if (liftencodervalue() > min && liftencodervalue() < max) {
-            if (UP) {
-
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lift.setPower(1);
-            } else if (DOWN) {
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lift.setPower(liftdownvalue());
-            } else {
-                lift.setPower(0.1);
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                // status = "brake";
-
-            }
-            status = String.valueOf(liftencodervalue());
-        } else if (liftencodervalue() >= max) {
-            if (DOWN) {
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lift.setPower(liftdownvalue());
-            } else {
-                lift.setPower(0.1);
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                //status = "maxbrake";
-            }
-
-            status = "MAX";
-        } else if (liftencodervalue() <= min) {
-            if (UP) {
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                lift.setPower(1);
-            } else {
-                lift.setPower(0.1);
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                //status = "minbrake";
-            }
-            status = "MIN";
-        }
-
-        sleep(time);
-        return status;
-
-    }
-
- */
-
-
 }
-
-
-
