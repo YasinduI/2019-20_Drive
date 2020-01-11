@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Paint;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static java.lang.Math.sqrt;
 
 
-@TeleOp(name = "Drive Code Meet 2")
+@TeleOp(name = "Drive Code Meet 3")
 
 
 public class MecanumDrive extends TeleOpHardware {
@@ -21,6 +23,7 @@ public class MecanumDrive extends TeleOpHardware {
         String gripperstatus = GripperIntake();
         String platformstatus = PlatformGrabber();
         String DrivingSpeed = returndrivevalue();
+        Capstone();
 
 
         telemetry.addData("DrivingSpeed " , DrivingSpeed);
@@ -29,6 +32,7 @@ public class MecanumDrive extends TeleOpHardware {
         telemetry.addData("gripperstatus", gripperstatus, GripRight.getPosition(), GripLeft.getPosition());
         telemetry.addData("platform", platformstatus);
         telemetry.addData("Brake", lift.getZeroPowerBehavior());
+        telemetry.addData("Captone", Capstone());
 
     }
 

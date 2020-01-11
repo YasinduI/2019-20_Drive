@@ -1,10 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 import static java.lang.Math.sqrt;
 
@@ -21,6 +28,9 @@ public class AutonHardware extends LinearOpMode {
     public Servo platformL;
     public CRServo spinR;
     public CRServo spinL;
+    public ModernRoboticsI2cGyro gyro;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,7 +76,11 @@ public class AutonHardware extends LinearOpMode {
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        telemetry.addData("liftvalue", lift.getCurrentPosition());
+        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class,"gyro");
+
+
+        telemetry.addLine("Ready");
+        telemetry.update();
     }
 
     public void getlift() {
@@ -74,6 +88,23 @@ public class AutonHardware extends LinearOpMode {
         lift = hardwareMap.get(DcMotor.class, "lift");
 
 
+    }
+
+    public void getdrive() {
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        motorBackRight = hardwareMap.get(DcMotor.class, "backRight");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backLeft");
+
+        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+
+    }
+
+    public void getgyro() {
+        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
     }
 
 
@@ -89,8 +120,6 @@ public class AutonHardware extends LinearOpMode {
 
     //Driving Functions and Methods
     public String mecaformula(double XX, double YY, double RR) {
-
-
         double FrontLeft = +(XX) - (YY) + (RR);
         double FrontRight = -(XX) - (YY) - (RR);
         double BackLeft = -(XX) + (YY) + (RR);
@@ -100,11 +129,6 @@ public class AutonHardware extends LinearOpMode {
         motorFrontRight.setPower(FrontRight);
         motorBackLeft.setPower(BackLeft);
         motorBackRight.setPower(BackRight);
-        GripLeft.scaleRange(.2, .5);
-        GripRight.scaleRange(.51, .8);
-        platformL.scaleRange(0, 0.65);
-        platformR.scaleRange(.35, 1);
-
 
         return "done";
     }
@@ -122,8 +146,25 @@ public class AutonHardware extends LinearOpMode {
     }
 
     public void DriveForward(long time, int stime) {
-        mecaformula(off, -on, off);
-        sleep(time);
+
+        getgyro();
+
+        telemetry.addLine("RUN");
+        telemetry.update();
+
+
+
+        if (gyro.getIntegratedZValue() > 0) {
+            mecaformula(off, off, -on);
+            sleep(time);
+        } else if (gyro.getIntegratedZValue() < 0) {
+            mecaformula(off, off, on);
+        }
+//        } else {
+//            mecaformula(off, -on, off);
+//        }
+
+        sleep(stime);
 
     }
 
@@ -153,7 +194,9 @@ public class AutonHardware extends LinearOpMode {
         sleep(time);
     }
 
-    public void Grabbers(long time, double position,int stime) {
+    //Mechanisms
+
+    public void Grabbers(long time, double position, int stime) {
         GripLeft.setPosition(position);
         GripRight.setPosition(position);
         sleep(stime);
@@ -165,8 +208,6 @@ public class AutonHardware extends LinearOpMode {
         platformR.setPosition(position);
         sleep(time);
     }
-
-
 
     // Lift Mechanism
     public void StopLiftArm(long time) {
@@ -203,4 +244,41 @@ public class AutonHardware extends LinearOpMode {
         return power;
     }
 
+    //Paths
+
+    public void PathRight() {
+
+    }
+
+    public void PathLeft() {
+
+    }
+
+    public void PathCenter() {
+
+    }
+
+
+    //Gryo
+
+    public void GyroInit() {
+        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        gyro.calibrate();
+
+        while (!isStopRequested() && gyro.isCalibrating()) {
+            telemetry.addLine("CALIBRATING");
+            telemetry.update();
+            sleep(50);
+            idle();
+        }
+            telemetry.addData("Heading", gyro.getIntegratedZValue());
+            telemetry.update();
+
+    }
+
+    public double GyroValue() {
+        getgyro();
+        int z = gyro.getIntegratedZValue();
+        return z;
+    }
 }
