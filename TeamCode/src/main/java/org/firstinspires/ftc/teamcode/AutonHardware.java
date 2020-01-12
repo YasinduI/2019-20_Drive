@@ -29,14 +29,37 @@ public class AutonHardware extends LinearOpMode {
     public CRServo spinR;
     public CRServo spinL;
     public ModernRoboticsI2cGyro gyro;
-
+    private int valLeft = -1;
+    private int valMid = -1;
+    private int valRight = -1;
+    private int iSkystonePos = 1;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        iSkystonePos = findSkystonePos();
+        telemetry.addData("findSkystonePos=" + iSkystonePos );
+        telemetry.update();
+
         startup();
+    }
 
+    private int findSkystonePos() {
+        SkystoneDetectorService skystoneDetectorService = new SkystoneDetectorService();
+        valLeft = skystoneDetectorService.getValLeft();
+        valMid = skystoneDetectorService.getValMid();
+        valRight = skystoneDetectorService.getValRight();
+        int pos = 1;
 
+        // determine which one has skystone
+
+        if (valLeft = 0) {
+            pos = 1;
+        } else if (valMid = 0) {
+            pos = 2;
+        } else
+            pos = 3;
+        return pos;
     }
 
 

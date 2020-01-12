@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,15 +8,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -35,17 +30,17 @@ import java.util.List;
  * monitor: 640 x 480
  *YES
  */
-@TeleOp(name= "SkystoneDetector", group="Sky autonomous")
+//@TeleOp(name= "SkystoneDetector", group="Sky autonomous")
 //@Disabled//comment out this line before using
-public class SkystoneDetector extends LinearOpMode {
+public class SkystoneDetectorService {
 
     private ElapsedTime runtime = new ElapsedTime();
 
     //0 means skystone, 1 means yellow stone
     //-1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
-    private static int valMid = -1;
-    private static int valLeft = -1;
-    private static int valRight = -1;
+    private int valMid = -1;
+    private int valLeft = -1;
+    private int valRight = -1;
 
     private static float rectHeight = .6f/8f;
     private static float rectWidth = 1.5f/8f;
@@ -63,8 +58,15 @@ public class SkystoneDetector extends LinearOpMode {
 
     OpenCvCamera webcam;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    public SkystoneDetectorService() {
+
+        init();
+
+        telemetry.addData("SkystoneDetectorService Starting");
+        telemetry.update();
+    }
+
+    private void  init() {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Logitech"), cameraMonitorViewId);
@@ -112,7 +114,6 @@ public class SkystoneDetector extends LinearOpMode {
         private Stage stageToRenderToViewport = Stage.detection;
         private Stage[] stages = Stage.values();
 
-        @Override
         public void onViewportTapped()
         {
             /*
@@ -132,7 +133,6 @@ public class SkystoneDetector extends LinearOpMode {
             stageToRenderToViewport = stages[nextStageNum];
         }
 
-        @Override
         public Mat processFrame(Mat input)
         {
             contoursList.clear();
@@ -229,5 +229,17 @@ public class SkystoneDetector extends LinearOpMode {
             }
         }
 
+    }
+
+    public int getValMid() {
+        return valMid;
+    }
+
+    public int getValLeft() {
+        return valLeft;
+    }
+
+    public int getValRight() {
+        return valRight;
     }
 }
