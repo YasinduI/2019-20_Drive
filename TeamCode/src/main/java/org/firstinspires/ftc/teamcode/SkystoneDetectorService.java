@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -12,7 +8,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -38,9 +33,9 @@ public class SkystoneDetectorService {
 
     //0 means skystone, 1 means yellow stone
     //-1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
-    private int valMid = -1;
-    private int valLeft = -1;
-    private int valRight = -1;
+    private static int valMid = -1;
+    private static int valLeft = -1;
+    private static int valRight = -1;
 
     private static float rectHeight = .6f/8f;
     private static float rectWidth = 1.5f/8f;
@@ -58,43 +53,43 @@ public class SkystoneDetectorService {
 
     OpenCvCamera webcam;
 
-    public SkystoneDetectorService() {
+    public SkystoneDetectorService(OpenCvCamera webcam) {
 
-        init();
+        init(webcam);
 
-        telemetry.addData("SkystoneDetectorService Starting");
-        telemetry.update();
+//        telemetry.addData("SkystoneDetectorService Starting");
+//        telemetry.update();
     }
 
-    private void  init() {
+    private void  init(OpenCvCamera webcam) {
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Logitech"), cameraMonitorViewId);
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Logitech"), cameraMonitorViewId);
         webcam.openCameraDevice();//open camera
         webcam.setPipeline(new StageSwitchingPipeline());//different stages
         webcam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
         //width, height
         //width = height in this case, because camera is in portrait mode.
 
-        waitForStart();
+//        waitForStart();
         runtime.reset();
-        reporting();
+//        reporting();
     }
 
-    private void reporting() {
-        while (opModeIsActive()) {
-            telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
-            telemetry.addData("Height", rows);
-            telemetry.addData("Width", cols);
-
-            telemetry.update();
-            sleep(100);
-            //call movement functions
-//            strafe(0.4, 200);
-//            moveDistance(0.4, 700);
-
-        }
-    }
+//    private void reporting() {
+//        while (opModeIsActive()) {
+//            telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+//            telemetry.addData("Height", rows);
+//            telemetry.addData("Width", cols);
+//
+//            telemetry.update();
+//            sleep(100);
+//            //call movement functions
+////            strafe(0.4, 200);
+////            moveDistance(0.4, 700);
+//
+//        }
+//    }
 
     //detection pipeline
     static class StageSwitchingPipeline extends OpenCvPipeline
@@ -242,4 +237,5 @@ public class SkystoneDetectorService {
     public int getValRight() {
         return valRight;
     }
+
 }

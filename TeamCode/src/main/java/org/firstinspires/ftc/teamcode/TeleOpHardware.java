@@ -45,7 +45,7 @@ public class TeleOpHardware extends OpMode {
 
         cap = hardwareMap.get(Servo.class,"cap");
 
-        cap.setDirection(Servo.Direction.REVERSE);
+        cap.setDirection(Servo.Direction.FORWARD);
 
 
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -313,11 +313,11 @@ public class TeleOpHardware extends OpMode {
 
         String status = "Locked";
         if(gamepad2.x){
-            cap.setPosition(0.4);
+            cap.setPosition(0);
             status = "Released";
         }
         else{
-            cap.setPosition(0.8);
+            cap.setPosition(0.4);
         }
         return status ;
     }

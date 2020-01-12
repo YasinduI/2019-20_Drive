@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Forward")
+@Autonomous(name = "Forward", group = "BackUp")
 
 
 public class Forward extends AutonHardware {

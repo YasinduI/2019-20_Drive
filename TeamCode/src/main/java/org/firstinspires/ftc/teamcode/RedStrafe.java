@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "LeftStrafe")
+@Autonomous(name = "LeftStrafe", group = "BackUp")
 
 
 public class RedStrafe extends AutonHardware {
