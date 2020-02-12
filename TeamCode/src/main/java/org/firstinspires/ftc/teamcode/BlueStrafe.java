@@ -13,6 +13,7 @@ public class BlueStrafe extends AutonHardware {
 
         startup();
         waitForStart();
+        sleep(2000);
         DriveForward(800,800);
         strafeRight(1000,1000);
 

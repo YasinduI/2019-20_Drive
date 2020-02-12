@@ -345,7 +345,7 @@ public class AutonHardware extends LinearOpMode {
         DriveForward(500,500);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeLeft(1000,1000);
+        strafeLeft(500,500);
         LiftArm(100,-1,100);
         StopLiftArm(50);
         DriveBackward(900,900);
@@ -362,10 +362,10 @@ public class AutonHardware extends LinearOpMode {
 
         strafeRight(1000,1000);
         DriveBackward(200,200);
-        strafeRight(1750,1750);
+        strafeRight(1800,1800);
         StopRobot(50);
         Grabbers(50,grabMax,200);
-        DriveForward(200,200);
+        DriveForward(300,300);
         StopRobot(100);
         Grabbers(50,grabMin,200);
         Intake(200,i_on,200);
@@ -395,7 +395,7 @@ public class AutonHardware extends LinearOpMode {
         LiftArm(200,1,200);
         StopLiftArm(50);
         strafeRight(1000,1000);
-        DriveForward(500,500);
+        DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
         strafeLeft(1000,1000);
@@ -511,9 +511,11 @@ public class AutonHardware extends LinearOpMode {
         Platform(500,Servo.MIN_POSITION,500);
         DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(200,-1,200);
+        LiftArm(100,-0.6,100);
         StopLiftArm(50);
         Grabbers(100,grabMax,100);
+        LiftArm(200,1,200);
+        StopLiftArm(50);
         strafeLeft(1000,1000);
         DriveForward(600,600);
         StopRobot(100);
@@ -535,10 +537,10 @@ public class AutonHardware extends LinearOpMode {
 
         strafeRight(1000,1000);
         DriveBackward(150,150);
-        strafeRight(1800,1800);
+        strafeRight(2050,250);
         StopRobot(50);
         Grabbers(50,grabMax,200);
-        DriveForward(200,200);
+        DriveForward(400,400);
         StopRobot(100);
         Grabbers(50,grabMin,200);
         Intake(200,i_on,200);
@@ -560,11 +562,13 @@ public class AutonHardware extends LinearOpMode {
         turnLeft(2800,2800);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
-        DriveForward(1200,1200);
+        DriveForward(1100,1100);
         StopRobot(100);
         LiftArm(200,-1,200);
         StopLiftArm(50);
         Grabbers(100,grabMax,100);
+        LiftArm(200,1,200);
+        StopLiftArm(50);
         strafeLeft(1000,1000);
         DriveForward(500,500);
         StopRobot(100);
@@ -616,6 +620,8 @@ public class AutonHardware extends LinearOpMode {
         LiftArm(200,-1,200);
         StopLiftArm(50);
         Grabbers(100,grabMax,100);
+        LiftArm(200,1,200);
+        StopLiftArm(50);
         strafeLeft(1000,1000);
         DriveForward(500,500);
         StopRobot(100);

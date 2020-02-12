@@ -125,10 +125,10 @@ public class TeleOpHardware extends OpMode {
 
             telemetry.addData("PRECISE BOY", "ON");
         } else {
-            FrontRight = (float) Range.clip(FrontRight, -0.5, 0.5);
-            FrontLeft = (float) Range.clip(FrontLeft, -0.5, 0.5);
-            BackLeft = (float) Range.clip(BackLeft, -0.5, 0.5);
-            BackRight = (float) Range.clip(BackRight, -0.5, 0.5);
+            FrontRight = (float) Range.clip(FrontRight, -0.6, 0.6);
+            FrontLeft = (float) Range.clip(FrontLeft, -0.6, 0.6);
+            BackLeft = (float) Range.clip(BackLeft, -0.6, 0.6);
+            BackRight = (float) Range.clip(BackRight, -0.6, 0.6);
 
 
         }
