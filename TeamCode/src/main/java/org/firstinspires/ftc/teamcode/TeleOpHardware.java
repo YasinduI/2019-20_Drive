@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -17,6 +21,7 @@ public class TeleOpHardware extends OpMode {
     public DcMotor motorBackRight;
     public DcMotor motorBackLeft;
     public DcMotor lift;
+    public DcMotor lifthelper;
     public Servo GripLeft;
     public Servo GripRight;
     public Servo platformR;
@@ -43,7 +48,7 @@ public class TeleOpHardware extends OpMode {
         spinL = hardwareMap.get(CRServo.class, "spinL");
         spinR = hardwareMap.get(CRServo.class, "spinR");
 
-        cap = hardwareMap.get(Servo.class,"cap");
+        cap = hardwareMap.get(Servo.class, "cap");
 
         cap.setDirection(Servo.Direction.FORWARD);
 
@@ -65,6 +70,10 @@ public class TeleOpHardware extends OpMode {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setDirection(DcMotor.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        lifthelper = hardwareMap.get(DcMotor.class,"lifthelper");
+        lifthelper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lifthelper.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("liftvalue", lift.getCurrentPosition());
 
@@ -101,10 +110,10 @@ public class TeleOpHardware extends OpMode {
         float X = (float) scaleInput(X2);
         float R = (float) scaleInput(R2);
 
-        float FrontLeft = +X + -Y + R;
-        float FrontRight = -X + -Y - R;
-        float BackLeft = -X + Y + R;
-        float BackRight = +X + Y - R;
+        float FrontLeft = +X - Y + R;
+        float FrontRight = - X - Y - R;
+        float BackLeft = - X - Y + R;
+        float BackRight = +X - Y - R;
 
 
         if (gamepad1.x) {
@@ -115,8 +124,7 @@ public class TeleOpHardware extends OpMode {
 
             telemetry.addData("SPEEDY BOY", "ON");
 
-        }
-        else if (gamepad1.right_bumper) {
+        } else if (gamepad1.right_bumper) {
             FrontRight = (float) Range.clip(FrontRight, -0.15, 0.15);
             FrontLeft = (float) Range.clip(FrontLeft, -0.15, 0.15);
             BackLeft = (float) Range.clip(BackLeft, -0.15, 0.15);
@@ -132,7 +140,7 @@ public class TeleOpHardware extends OpMode {
 
 
         }
-        if (X+Y+R == 0){
+        if (X + Y + R == 0) {
             motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -184,7 +192,7 @@ public class TeleOpHardware extends OpMode {
             power = String.valueOf(spinL.getPower());
         }
 
-        return (power+","+"L" + GripLeft.getPosition() + "," + "R" +GripRight.getPosition());
+        return (power + "," + "L" + GripLeft.getPosition() + "," + "R" + GripRight.getPosition());
     }
 
     public String PlatformGrabber() {
@@ -195,7 +203,7 @@ public class TeleOpHardware extends OpMode {
         platformL.setPosition(gamepad2.right_trigger);
         platformR.setPosition(gamepad2.left_trigger);
 
-        return ("L" + platformL.getPosition() + "," + "R" +platformR.getPosition());
+        return ("L" + platformL.getPosition() + "," + "R" + platformR.getPosition());
     }
 
     private double scaleInput(double dVal) {
@@ -262,7 +270,7 @@ public class TeleOpHardware extends OpMode {
         getlift();
 
         int min = 10;
-        int max = 1850;
+        int max = 1800;
 
         String status = "na";
 
@@ -270,13 +278,19 @@ public class TeleOpHardware extends OpMode {
             if (gamepad2.dpad_up) {
 
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 lift.setPower(1);
+                lifthelper.setPower(1);
             } else if (gamepad2.dpad_down) {
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 lift.setPower(downvalue());
+                lifthelper.setPower(downvalue());
             } else {
                 lift.setPower(0.1);
+                lifthelper.setPower(0.1);
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 // status = "brake";
 
             }
@@ -284,10 +298,14 @@ public class TeleOpHardware extends OpMode {
         } else if (liftencodervalue() >= max) {
             if (gamepad2.dpad_down) {
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 lift.setPower(downvalue());
+                lifthelper.setPower(downvalue());
             } else {
                 lift.setPower(0.1);
+                lifthelper.setPower(0.1);
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 //status = "maxbrake";
             }
 
@@ -295,10 +313,14 @@ public class TeleOpHardware extends OpMode {
         } else if (liftencodervalue() <= min) {
             if (gamepad2.dpad_up) {
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 lift.setPower(1);
+                lifthelper.setPower(1);
             } else {
                 lift.setPower(0.1);
+                lifthelper.setPower(0.1);
                 lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                lifthelper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 //status = "minbrake";
             }
             status = "MIN";
@@ -309,17 +331,16 @@ public class TeleOpHardware extends OpMode {
 
     }
 
-    public String Capstone(){
+    public String Capstone() {
 
         String status = "Locked";
-        if(gamepad2.x){
+        if (gamepad2.x) {
             cap.setPosition(0);
             status = "Released";
-        }
-        else{
+        } else {
             cap.setPosition(0.4);
         }
-        return status ;
+        return status;
     }
 
        /* double power (){
