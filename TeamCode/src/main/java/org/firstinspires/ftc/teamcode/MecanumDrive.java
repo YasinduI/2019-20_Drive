@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import static java.lang.Math.sqrt;
 
 
-@TeleOp(name = "Drive Code Meet 3")
+@TeleOp(name = "Drive Code ILT")
 
 
 public class MecanumDrive extends TeleOpHardware {
@@ -25,6 +25,7 @@ public class MecanumDrive extends TeleOpHardware {
         String platformstatus = PlatformGrabber();
         String DrivingSpeed = returndrivevalue();
         Capstone();
+        String SideArmValue = SideArm();
 
 
         telemetry.addData("DrivingSpeed " , DrivingSpeed);
@@ -34,6 +35,7 @@ public class MecanumDrive extends TeleOpHardware {
         telemetry.addData("platform", platformstatus);
         telemetry.addData("Brake", lift.getZeroPowerBehavior());
         telemetry.addData("Captone", Capstone());
+        telemetry.addData("SideArm Value",SideArmValue);
 
     }
 

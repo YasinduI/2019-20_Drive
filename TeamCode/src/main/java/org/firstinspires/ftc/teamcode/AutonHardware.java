@@ -35,6 +35,8 @@ public class AutonHardware extends LinearOpMode {
     public Servo platformL;
     public CRServo spinR;
     public CRServo spinL;
+    public Servo Arm1;
+    public Servo Arm2;
     public ModernRoboticsI2cGyro gyro;
     private int valLeft = 10;
     private int valMid = 10;
@@ -126,6 +128,12 @@ public class AutonHardware extends LinearOpMode {
         GripRight.setDirection(Servo.Direction.FORWARD);
         GripLeft.setDirection(Servo.Direction.REVERSE);
 
+        Arm1.setDirection(Servo.Direction.REVERSE);
+        Arm2.setDirection(Servo.Direction.REVERSE);
+        Arm1 = hardwareMap.get(Servo.class, "arm1");
+        Arm2 = hardwareMap.get(Servo.class, "arm2");
+        Arm1.scaleRange(0.1, 1);
+        Arm2.scaleRange(0, .4);
         platformL.setDirection(Servo.Direction.FORWARD);
         platformR.setDirection(Servo.Direction.REVERSE);
 
@@ -178,6 +186,13 @@ public class AutonHardware extends LinearOpMode {
     static final int i_on = 1;
     static final int i_off = 0;
 
+    static final double sarmup = 1;
+    static final double sarmdown = 0.1;
+    static final double sarmmid = 0.35;
+
+    static final double sarmopen = 1;
+    static final double sarmclose = 0;
+
 
     //Driving Functions and Methods
     public String mecaformula(double XX, double YY, double RR) {
@@ -224,6 +239,25 @@ public class AutonHardware extends LinearOpMode {
         mecaformula(off, off, s_on);
         sleep(time);
     }
+    public void  sideArmDown(long time, int stime) {
+        Arm2.setPosition(0);
+        sleep(stime);
+    }
+
+    public void  sideArmUp(long time, int stime) {
+        Arm2.setPosition(1);
+        sleep(stime);
+    }
+
+    public void  sideArmOpen(long time, int stime) {
+        Arm1.setPosition(1);
+        sleep(stime);
+    }
+
+    public void  sideArmClose(long time, int stime) {
+        Arm1.setPosition(0);
+        sleep(stime);
+    }
 
     public void turnLeft(long time, int stime) {
         mecaformula(off, off, -s_on);
@@ -269,7 +303,7 @@ public class AutonHardware extends LinearOpMode {
     // Lift Mechanism
     public void StopLiftArm(long time) {
         getlift();
-        lift.setPower(0);
+        lift.setPower(0.1);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sleep(time);
     }
@@ -284,7 +318,6 @@ public class AutonHardware extends LinearOpMode {
 
 
     }
-
 
     public double liftdownvalue() {
         getlift();
@@ -301,58 +334,75 @@ public class AutonHardware extends LinearOpMode {
         return power;
     }
 
+    public void sideArm(long time, int stime, double aposition) {
+        Arm2.setPosition(aposition);
+        sleep(stime);
+    }
+
+    // public void sideArmUp(long time, int stime) {
+    //     Arm2.setPosition(1);
+    //     sleep(stime);
+    // }
+
+    public void sideArmGrip(long time, int stime, double gposition) {
+        Arm1.setPosition(gposition);
+        sleep(stime);
+    }
+
     //RED Paths
 
     public void RedPathRight() {
         telemetry.addLine("Target: Right");
         telemetry.update();
-        strafeRight(1100,1100);
-        DriveBackward(800,800);
-        turnRight(600,600);
+        Grabbers(100,grabMin,100);
+        sideArmGrip(100,100,sarmopen);
+        sideArm(500,500,sarmdown);
+        DriveBackward(250,250);
+        strafeRight(2400,2400);
+        StopRobot(10);
+        sideArmGrip(1000,1000,sarmclose);
+        sideArm(1000,1000, sarmup);
+        strafeLeft(600,600);
         StopRobot(50);
-        Grabbers(50,grabMax,200);
-        DriveForward(600,600);
-        StopRobot(100);
-        Grabbers(50,grabMin,200);
-        Intake(200,i_on,200);
-        DriveBackward(500,500);
-        turnLeft(700,700);
-        StopRobot(50);
-        Intake(50,off,50);
-        DriveBackward(2100,2100);
-        StopRobot(50);
-        LiftArm(700,1,700);
-        StopLiftArm(100);
-        turnRight(800,800);
+        DriveBackward(2400,2400);
+        strafeRight(600,600);
+        StopRobot(10);
+        sideArm(500, 500, sarmmid);
+        sideArmGrip(200,200, sarmopen);
+        sideArm(200,200, sarmup);
+        sideArmGrip(200,200, sarmclose);
+        strafeLeft(700,700);
+        DriveBackward(400,400);
+        turnRight(750,750);
+        StopRobot(10);
+        LiftArm(500,1,500);
+        StopLiftArm(50);
         DriveForward(750,750);
         DriveBackward(80,100);
         StopRobot(100);
         Platform(1000,Servo.MAX_POSITION,1500);
         DriveForward(80,80);
-        DriveBackward(800,800);
+        DriveBackward(1000,1000);
         strafeLeft(1500,1500);
         turnRight(2800,2800);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
         DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(200,-1,200);
-        StopLiftArm(50);
-        Grabbers(100,grabMax,100);
-        LiftArm(200,1,200);
-        StopLiftArm(50);
         strafeRight(1000,1000);
-        DriveForward(500,500);
+        DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeLeft(500,500);
-        LiftArm(100,-1,100);
-        StopLiftArm(50);
+        strafeLeft(900,900);
+        LiftArm(10,-0.2,10);
         DriveBackward(900,900);
         StopRobot(100);
-        LiftArm(3000,0.15,2000);
+        StopLiftArm(50);
+        LiftArm(3000,0.25,2000);
 
-        StopLiftArm(100);
+        sleep(5000);
+
+
         stop();
     }
 
@@ -360,52 +410,53 @@ public class AutonHardware extends LinearOpMode {
         telemetry.addLine("Target: Left");
         telemetry.update();
 
-        strafeRight(1000,1000);
-        DriveBackward(200,200);
-        strafeRight(1800,1800);
+        Grabbers(100,grabMin,100);
+        sideArmGrip(100,100,sarmopen);
+        sideArm(500,500,sarmdown);
+        DriveForward(500,500);
+        strafeRight(2500,2500);
+        StopRobot(10);
+        sideArmGrip(1000,1000,sarmclose);
+        sideArm(1000,1000, sarmup);
+        strafeLeft(600,600);
         StopRobot(50);
-        Grabbers(50,grabMax,200);
-        DriveForward(300,300);
-        StopRobot(100);
-        Grabbers(50,grabMin,200);
-        Intake(200,i_on,200);
-        strafeLeft(1250,1250);
-        StopRobot(50);
-        Intake(50,off,50);
-        DriveBackward(3050,3050);
-        StopRobot(50);
-        LiftArm(700,1,700);
-        StopLiftArm(100);
-        turnRight(800,800);
+        DriveBackward(2900,2900);
+        strafeRight(600,600);
+        StopRobot(10);
+        sideArm(500, 500, sarmmid);
+        sideArmGrip(200,200, sarmopen);
+        sideArm(200,200, sarmup);
+        sideArmGrip(200,200, sarmclose);
+        strafeLeft(700,700);
+        DriveBackward(400,400);
+        turnRight(750,750);
+        StopRobot(10);
+        LiftArm(500,1,500);
+        StopLiftArm(50);
         DriveForward(750,750);
         DriveBackward(80,100);
         StopRobot(100);
         Platform(1000,Servo.MAX_POSITION,1500);
         DriveForward(80,80);
-        DriveBackward(900,900);
+        DriveBackward(1000,1000);
         strafeLeft(1500,1500);
         turnRight(2800,2800);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
         DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(200,-1,200);
-        StopLiftArm(50);
-        Grabbers(100,grabMax,100);
-        LiftArm(200,1,200);
-        StopLiftArm(50);
         strafeRight(1000,1000);
         DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeLeft(1000,1000);
-        LiftArm(50,-1,50);
-        StopLiftArm(50);
+        strafeLeft(900,900);
+        LiftArm(10,-0.2,10);
         DriveBackward(900,900);
         StopRobot(100);
-        LiftArm(3000,0.15,2000);
+        StopLiftArm(50);
+        LiftArm(3000,0.25,2000);
 
-        StopLiftArm(100);
+        sleep(5000);
         stop();
 
     }
@@ -414,50 +465,53 @@ public class AutonHardware extends LinearOpMode {
         telemetry.addLine("Target: Center");
         telemetry.update();
 
-        strafeRight(1000,1000);
-        DriveBackward(480,180);
-        strafeRight(1750,1750);
+        Grabbers(100,grabMin,100);
+        sideArmGrip(100,100,sarmopen);
+        sideArm(500,500,sarmdown);
+        DriveForward(210,210);
+        strafeRight(2300,2300);
+        StopRobot(10);
+        sideArmGrip(1000,1000,sarmclose);
+        sideArm(1000,1000, sarmup);
+        strafeLeft(600,600);
         StopRobot(50);
-        Grabbers(50,grabMax,200);
-        DriveForward(200,200);
-        StopRobot(100);
-        Grabbers(50,grabMin,200);
-        Intake(200,i_on,200);
-        strafeLeft(1500,1500);
-        StopRobot(50);
-        Intake(50,off,50);
-        DriveBackward(2600,2600);
-        StopRobot(50);
-        LiftArm(700,1,700);
-        StopLiftArm(100);
-        turnRight(800,800);
+        DriveBackward(2650,2650);
+        strafeRight(700,700);
+        StopRobot(10);
+        sideArm(500, 500, sarmmid);
+        sideArmGrip(200,200, sarmopen);
+        sideArm(200,200, sarmup);
+        sideArmGrip(200,200, sarmclose);
+        strafeLeft(700,700);
+        DriveBackward(400,400);
+        turnRight(750,750);
+        StopRobot(10);
+        LiftArm(500,1,500);
+        StopLiftArm(50);
         DriveForward(750,750);
         DriveBackward(80,100);
         StopRobot(100);
         Platform(1000,Servo.MAX_POSITION,1500);
         DriveForward(80,80);
-        DriveBackward(900,900);
+        DriveBackward(1000,1000);
         strafeLeft(1500,1500);
-        turnRight(2800,2800);
+        turnRight(2600,2600);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
         DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(200,-1,200);
-        StopLiftArm(50);
-        Grabbers(100,grabMax,100);
         strafeRight(1000,1000);
-        DriveForward(500,500);
+        DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeLeft(1000,1000);
-        LiftArm(50,-1,50);
-        StopLiftArm(50);
+        strafeLeft(900,900);
+        LiftArm(10,-0.2,10);
         DriveBackward(900,900);
-        StopRobot(10);
-        LiftArm(3000,0.15,2000);
+        StopRobot(100);
+        StopLiftArm(50);
+        LiftArm(3000,0.25,2000);
 
-        StopLiftArm(100);
+        sleep(5000);
         stop();
     }
 
@@ -482,52 +536,53 @@ public class AutonHardware extends LinearOpMode {
     public void BluePathRight() {
         telemetry.addLine("Target: Right");
         telemetry.update();
-        strafeRight(1000,1000);
-        DriveBackward(600,600);
-        strafeRight(1800,1800);
+        Grabbers(100,grabMin,100);
+        sideArmGrip(100,100,sarmopen);
+        sideArm(500,500,sarmdown);
+        DriveBackward(300,300);
+        strafeRight(2200, 2200);
+        StopRobot(10);
+        sideArmGrip(1000,1000,sarmclose);
+        sideArm(1000,1000, sarmup);
+        strafeLeft(600,600);
         StopRobot(50);
-        Grabbers(50,grabMax,200);
-        DriveForward(200,200);
-        StopRobot(100);
-        Grabbers(50,grabMin,200);
-        Intake(200,i_on,200);
-        strafeLeft(1500,1500);
-        StopRobot(50);
-        Intake(50,off,50);
-        DriveForward(3600,3600);
-        StopRobot(50);
-        LiftArm(700,1,700);
-        StopLiftArm(100);
-        turnRight(800,800);
-        DriveForward(750,750);
+        DriveForward(2800,2800);
+        strafeRight(1300,1300);
+        StopRobot(10);
+        sideArm(500, 500, sarmmid);
+        sideArmGrip(200,200, sarmopen);
+        sideArm(200,200, sarmup);
+        sideArmGrip(200,200, sarmclose);
+        strafeLeft(200,200);
+        DriveForward(250,250);
+        turnRight(900, 900);
+        StopRobot(10);
+        LiftArm(500,1,500);
+        StopLiftArm(50);
+        DriveForward(400,400);
         DriveBackward(80,100);
         StopRobot(100);
         Platform(1000,Servo.MAX_POSITION,1500);
         DriveForward(80,80);
-        DriveBackward(900,900);
+        DriveBackward(1000,1000);
         strafeRight(1500,1500);
-        turnLeft(2800,2800);
+        turnLeft(2000,2000);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
         DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(100,-0.6,100);
-        StopLiftArm(50);
-        Grabbers(100,grabMax,100);
-        LiftArm(200,1,200);
-        StopLiftArm(50);
         strafeLeft(1000,1000);
         DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeRight(1000,1000);
-        LiftArm(50,-1,50);
-        StopLiftArm(50);
+        strafeRight(900,900);
+        LiftArm(10,-0.2,10);
         DriveBackward(900,900);
-        StopRobot(10);
-        LiftArm(3000,0.15,2000);
+        StopRobot(100);
+        StopLiftArm(50);
+        LiftArm(3000,0.25,2000);
 
-        StopLiftArm(100);
+        sleep(5000);
         stop();
     }
 
@@ -535,52 +590,53 @@ public class AutonHardware extends LinearOpMode {
         telemetry.addLine("Target: Left");
         telemetry.update();
 
-        strafeRight(1000,1000);
-        DriveBackward(150,150);
-        strafeRight(2050,250);
+        Grabbers(100,grabMin,100);
+        sideArmGrip(100,100,sarmopen);
+        sideArm(500,500,sarmdown);
+        DriveForward(295,295);
+        strafeRight(2300,2300);
+        StopRobot(10);
+        sideArmGrip(1000,1000,sarmclose);
+        sideArm(1000,1000, sarmup);
+        strafeLeft(1000,1000);
         StopRobot(50);
-        Grabbers(50,grabMax,200);
-        DriveForward(400,400);
-        StopRobot(100);
-        Grabbers(50,grabMin,200);
-        Intake(200,i_on,200);
-        strafeLeft(1250,1250);
-        StopRobot(50);
-        Intake(50,off,50);
-        DriveForward(3000,3000);
-        StopRobot(50);
-        LiftArm(700,1,700);
-        StopLiftArm(100);
-        turnRight(800,800);
-        DriveForward(750,750);
+        DriveForward(2300,2300);
+        strafeRight(1100,1100);
+        StopRobot(10);
+        sideArm(500, 500, sarmmid);
+        sideArmGrip(200,200, sarmopen);
+        sideArm(200,200, sarmup);
+        sideArmGrip(200,200, sarmclose);
+        strafeLeft(700,700);
+        DriveForward(250,250);
+        turnRight(850,850);
+        StopRobot(10);
+        LiftArm(500,1,500);
+        StopLiftArm(50);
+        DriveForward(500,500);
         DriveBackward(80,100);
         StopRobot(100);
         Platform(1000,Servo.MAX_POSITION,1500);
         DriveForward(80,80);
-        DriveBackward(900,900);
+        DriveBackward(1000,1000);
         strafeRight(1500,1500);
-        turnLeft(2800,2800);
+        turnLeft(2000,2000);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
-        DriveForward(1100,1100);
+        DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(200,-1,200);
-        StopLiftArm(50);
-        Grabbers(100,grabMax,100);
-        LiftArm(200,1,200);
-        StopLiftArm(50);
-        strafeLeft(1000,1000);
-        DriveForward(500,500);
+        strafeLeft(900,900);
+        DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeRight(1000,1000);
-        LiftArm(50,-1,50);
-        StopLiftArm(50);
+        strafeRight(800,800);
+        LiftArm(10,-0.2,10);
         DriveBackward(900,900);
-        StopRobot(10);
-        LiftArm(3000,0.15,2000);
+        StopRobot(100);
+        StopLiftArm(50);
+        LiftArm(3000,0.25,2000);
 
-        StopLiftArm(100);
+        sleep(5000);
         stop();
     }
 
@@ -588,52 +644,53 @@ public class AutonHardware extends LinearOpMode {
         telemetry.addLine("Target: Center");
         telemetry.update();
 
-        strafeRight(1000,1000);
-        DriveBackward(350,350);
-        strafeRight(1800,1800);
+        Grabbers(100,grabMin,100);
+        sideArmGrip(100,100,sarmopen);
+        sideArm(500,500,sarmdown);
+        //DriveBackward(10,10);
+        strafeRight(2100,2100);
+        StopRobot(10);
+        sideArmGrip(1000,1000,sarmclose);
+        sideArm(1000,1000, sarmup);
+        strafeLeft(450,450);
         StopRobot(50);
-        Grabbers(50,grabMax,200);
+        DriveForward(2500,2500);
+        strafeRight(1100,1100);
+        StopRobot(10);
+        sideArm(500, 500, sarmmid);
+        sideArmGrip(200,200, sarmopen);
+        sideArm(200,200, sarmup);
+        sideArmGrip(200,200, sarmclose);
+        strafeLeft(700,700);
         DriveForward(250,250);
-        StopRobot(100);
-        Grabbers(50,grabMin,200);
-        Intake(200,i_on,200);
-        strafeLeft(1500,1500);
-        StopRobot(50);
-        Intake(50,off,50);
-        DriveForward(3200,3200);
-        StopRobot(50);
-        LiftArm(700,1,700);
-        StopLiftArm(100);
-        turnRight(800,800);
-        DriveForward(750,750);
+        turnRight(850,850);
+        StopRobot(10);
+        LiftArm(500,1,500);
+        StopLiftArm(50);
+        DriveForward(500,500);
         DriveBackward(80,100);
         StopRobot(100);
         Platform(1000,Servo.MAX_POSITION,1500);
         DriveForward(80,80);
-        DriveBackward(900,900);
+        DriveBackward(1000,1000);
         strafeRight(1500,1500);
-        turnLeft(2500,2500);
+        turnLeft(2000,2000);
         StopRobot(50);
         Platform(500,Servo.MIN_POSITION,500);
         DriveForward(1200,1200);
         StopRobot(100);
-        LiftArm(200,-1,200);
-        StopLiftArm(50);
-        Grabbers(100,grabMax,100);
-        LiftArm(200,1,200);
-        StopLiftArm(50);
-        strafeLeft(1000,1000);
-        DriveForward(500,500);
+        strafeLeft(900,900);
+        DriveForward(600,600);
         StopRobot(100);
         DriveBackward(800,800);
-        strafeRight(1000,1000);
-        LiftArm(50,-1,50);
-        StopLiftArm(50);
+        strafeRight(900,900);
+        LiftArm(10,-0.2,10);
         DriveBackward(900,900);
-        StopRobot(10);
-        LiftArm(3000,0.15,2000);
+        StopRobot(100);
+        StopLiftArm(50);
+        LiftArm(3000,0.25,2000);
 
-        StopLiftArm(100);
+        sleep(5000);
         stop();
     }
 

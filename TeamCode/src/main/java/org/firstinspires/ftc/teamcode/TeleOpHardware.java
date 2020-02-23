@@ -29,6 +29,8 @@ public class TeleOpHardware extends OpMode {
     public CRServo spinR;
     public CRServo spinL;
     public Servo cap;
+    public Servo Arm1;
+    public Servo Arm2;
 
     @Override
     public void init() {
@@ -49,8 +51,10 @@ public class TeleOpHardware extends OpMode {
         spinR = hardwareMap.get(CRServo.class, "spinR");
 
         cap = hardwareMap.get(Servo.class, "cap");
+        Arm1 = hardwareMap.get(Servo.class,"arm1");
+        Arm2 = hardwareMap.get(Servo.class,"arm2");
 
-        cap.setDirection(Servo.Direction.FORWARD);
+        cap.setDirection(Servo.Direction.REVERSE);
 
 
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -62,6 +66,8 @@ public class TeleOpHardware extends OpMode {
         spinL.setDirection(CRServo.Direction.REVERSE);
         GripRight.setDirection(Servo.Direction.FORWARD);
         GripLeft.setDirection(Servo.Direction.REVERSE);
+        Arm1.setDirection(Servo.Direction.REVERSE);
+        Arm2.setDirection(Servo.Direction.REVERSE);
 
         platformL.setDirection(Servo.Direction.FORWARD);
         platformR.setDirection(Servo.Direction.REVERSE);
@@ -335,13 +341,32 @@ public class TeleOpHardware extends OpMode {
 
         String status = "Locked";
         if (gamepad2.x) {
-            cap.setPosition(0);
+            cap.setPosition(0.4);
             status = "Released";
         } else {
-            cap.setPosition(0.4);
+            cap.setPosition(0);
         }
         return status;
     }
+
+    public String SideArm(){
+
+        String ArmValue = String.valueOf(Arm1.getPosition()+ ","+Arm2.getPosition());
+
+        if(gamepad1.y){
+            Arm1.setPosition(0);
+        }
+        else if (gamepad1.b){
+            Arm2.setPosition(0);
+        }
+        else{
+            Arm1.setPosition(1);
+            Arm2.setPosition(1);
+        }
+
+    return ArmValue;
+    }
+
 
        /* double power (){
             double dpower = 0;
@@ -351,6 +376,7 @@ public class TeleOpHardware extends OpMode {
             }
             return dpower;
         }
+
         */
 
 
