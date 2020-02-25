@@ -341,30 +341,33 @@ public class TeleOpHardware extends OpMode {
 
         String status = "Locked";
         if (gamepad2.x) {
-            cap.setPosition(0.4);
+            cap.setPosition(0);
             status = "Released";
         } else {
-            cap.setPosition(0);
+            cap.setPosition(0.7);
         }
         return status;
     }
 
-    public String SideArm(){
+    public String SideArm (){
 
         String ArmValue = String.valueOf(Arm1.getPosition()+ ","+Arm2.getPosition());
-
+        Arm1.scaleRange(0.1, 0.7);
+        Arm2.scaleRange(0, 1);
         if(gamepad1.y){
             Arm1.setPosition(0);
         }
-        else if (gamepad1.b){
+        if(gamepad1.x){
+            Arm1.setPosition(1);
+        }
+        if (gamepad1.b){
             Arm2.setPosition(0);
         }
-        else{
-            Arm1.setPosition(1);
+        else if(gamepad1.a){
             Arm2.setPosition(1);
         }
 
-    return ArmValue;
+        return ArmValue;
     }
 
 
