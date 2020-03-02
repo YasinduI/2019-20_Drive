@@ -69,8 +69,8 @@ public class TeleOpHardware extends OpMode {
         Arm1.setDirection(Servo.Direction.REVERSE);
         Arm2.setDirection(Servo.Direction.REVERSE);
 
-        platformL.setDirection(Servo.Direction.FORWARD);
-        platformR.setDirection(Servo.Direction.REVERSE);
+        platformL.setDirection(Servo.Direction.REVERSE);
+        platformR.setDirection(Servo.Direction.FORWARD);
 
         lift = hardwareMap.get(DcMotor.class, "lift");
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -139,10 +139,10 @@ public class TeleOpHardware extends OpMode {
 
             telemetry.addData("PRECISE BOY", "ON");
         } else {
-            FrontRight = (float) Range.clip(FrontRight, -0.6, 0.6);
-            FrontLeft = (float) Range.clip(FrontLeft, -0.6, 0.6);
-            BackLeft = (float) Range.clip(BackLeft, -0.6, 0.6);
-            BackRight = (float) Range.clip(BackRight, -0.6, 0.6);
+            FrontRight = (float) Range.clip(FrontRight, -0.55, 0.55);
+            FrontLeft = (float) Range.clip(FrontLeft, -0.55, 0.55);
+            BackLeft = (float) Range.clip(BackLeft, -0.55, 0.55);
+            BackRight = (float) Range.clip(BackRight, -0.55, 0.55);
 
 
         }
@@ -201,15 +201,16 @@ public class TeleOpHardware extends OpMode {
         return (power + "," + "L" + GripLeft.getPosition() + "," + "R" + GripRight.getPosition());
     }
 
-    public String PlatformGrabber() {
+    public void PlatformGrabber() {
 
-        platformL.scaleRange(0, 0.65);
-        platformR.scaleRange(.35, 1);
+        platformL.scaleRange(.3, 1);
+        platformR.scaleRange(0, 0.7);
 
-        platformL.setPosition(gamepad2.right_trigger);
-        platformR.setPosition(gamepad2.left_trigger);
+        platformL.setPosition(gamepad2.left_trigger);
+        platformR.setPosition(gamepad2.right_trigger);
 
-        return ("L" + platformL.getPosition() + "," + "R" + platformR.getPosition());
+        return;
+
     }
 
     private double scaleInput(double dVal) {
@@ -343,8 +344,8 @@ public class TeleOpHardware extends OpMode {
         if (gamepad2.x) {
             cap.setPosition(0);
             status = "Released";
-        } else {
-            cap.setPosition(0.7);
+        } else if (!gamepad2.x) {
+            cap.setPosition(0.8);
         }
         return status;
     }

@@ -22,7 +22,7 @@ public class MecanumDrive extends TeleOpHardware {
         Driving();
         LiftArm();
         String gripperstatus = GripperIntake();
-        String platformstatus = PlatformGrabber();
+        PlatformGrabber();
         String DrivingSpeed = returndrivevalue();
         Capstone();
         String SideArmValue = SideArm();
@@ -32,7 +32,7 @@ public class MecanumDrive extends TeleOpHardware {
         telemetry.addData("liftstatus", LiftArm());
         telemetry.addData("liftpower", lift.getPower());
         telemetry.addData("gripperstatus", gripperstatus, GripRight.getPosition(), GripLeft.getPosition());
-        telemetry.addData("platform", platformstatus);
+//        telemetry.addData("platform", platformstatus);
         telemetry.addData("Brake", lift.getZeroPowerBehavior());
         telemetry.addData("Captone", Capstone());
         telemetry.addData("SideArm Value",SideArmValue);
