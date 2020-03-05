@@ -26,6 +26,7 @@ public class MecanumDrive extends TeleOpHardware {
         String DrivingSpeed = returndrivevalue();
         Capstone();
         String SideArmValue = SideArm();
+        Tape();
 
 
         telemetry.addData("DrivingSpeed " , DrivingSpeed);

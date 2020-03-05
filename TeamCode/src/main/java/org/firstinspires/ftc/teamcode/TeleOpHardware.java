@@ -22,6 +22,7 @@ public class TeleOpHardware extends OpMode {
     public DcMotor motorBackLeft;
     public DcMotor lift;
     public DcMotor lifthelper;
+    public DcMotor tapemeasure;
     public Servo GripLeft;
     public Servo GripRight;
     public Servo platformR;
@@ -81,7 +82,7 @@ public class TeleOpHardware extends OpMode {
         lifthelper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lifthelper.setDirection(DcMotor.Direction.REVERSE);
 
-        telemetry.addData("liftvalue", lift.getCurrentPosition());
+        tapemeasure = hardwareMap.get(DcMotor.class,"tape");
 
 
     }
@@ -131,10 +132,10 @@ public class TeleOpHardware extends OpMode {
             telemetry.addData("SPEEDY BOY", "ON");
 
         } else if (gamepad1.right_bumper) {
-            FrontRight = (float) Range.clip(FrontRight, -0.15, 0.15);
-            FrontLeft = (float) Range.clip(FrontLeft, -0.15, 0.15);
-            BackLeft = (float) Range.clip(BackLeft, -0.15, 0.15);
-            BackRight = (float) Range.clip(BackRight, -0.15, 0.15);
+            FrontRight = (float) Range.clip(FrontRight, -0.3, 0.3);
+            FrontLeft = (float) Range.clip(FrontLeft, -0.3, 0.3);
+            BackLeft = (float) Range.clip(BackLeft, -0.3, 0.3);
+            BackRight = (float) Range.clip(BackRight, -0.3, 0.3);
 
 
             telemetry.addData("PRECISE BOY", "ON");
@@ -372,16 +373,9 @@ public class TeleOpHardware extends OpMode {
     }
 
 
-       /* double power (){
-            double dpower = 0;
-            double powerL = spinL.getPower();
-            if  (powerL == 0){
-                dpower = 1;
-            }
-            return dpower;
-        }
-
-        */
+    public void Tape (){
+        tapemeasure.setPower(gamepad2.left_stick_y);
+    }
 
 
 }
